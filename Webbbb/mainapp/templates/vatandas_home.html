@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vatandaş Ana Sayfa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px 60px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+        .warning {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hoşgeldiniz</h2>
+        <button onclick="window.location.href='{% url 'randevu_al' %}'">Randevu Alma</button>
+        <div class="warning">
+            Randevu konularını öne çıkartmak ve işlemlerinizin daha hızlı yapılmasını sağlamak için Chatbox / Gemini AI kullanmanızı öneririz.
+        </div>
+        <button onclick="window.location.href='{% url 'vatandas_chatbox' %}'">Chatbox</button>
+        <button onclick="window.location.href='{% url 'vatandas_logout' %}'">Çıkış</button>
+    </div>
+</body>
+</html>

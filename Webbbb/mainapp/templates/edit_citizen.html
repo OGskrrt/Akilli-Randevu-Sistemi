@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vatandaş Düzenleme</title>
+</head>
+<body>
+    <div>
+        <h2>Vatandaş Düzenleme</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ad</th>
+                    <th>Soyad</th>
+                    <th>Doğum Tarihi</th>
+                    <th>Cinsiyet</th>
+                    <th>Telefon Numarası</th>
+                    <th>Adres</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for citizen in citizens %}
+                <tr>
+                    <td>{{ citizen.id }}</td>
+                    <td>{{ citizen.Ad }}</td>
+                    <td>{{ citizen.Soyad }}</td>
+                    <td>{{ citizen.DogumTarihi }}</td>
+                    <td>{{ citizen.Cinsiyet }}</td>
+                    <td>{{ citizen.TelefonNumarasi }}</td>
+                    <td>{{ citizen.Adres }}</td>
+                    <td>
+                        <a href="{% url 'edit_citizen_detail' citizen.id %}"><button>Düzenle</button></a>
+                        <a href="{% url 'delete_citizen' citizen.id %}"><button>Sil</button></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

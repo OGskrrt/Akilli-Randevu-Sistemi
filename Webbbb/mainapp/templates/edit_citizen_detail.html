@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vatandaş Bilgilerini Düzenle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .edit-form {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            width: 400px;
+            max-width: 100%;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-form">
+        <h1>Vatandaş Bilgilerini Düzenle</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="Ad">Ad</label>
+                <input type="text" id="Ad" name="Ad" value="{{ citizen.Ad }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Soyad">Soyad</label>
+                <input type="text" id="Soyad" name="Soyad" value="{{ citizen.Soyad }}" required>
+            </div>
+            <div class="form-group">
+                <label for="DogumTarihi">Doğum Tarihi</label>
+                <input type="date" id="DogumTarihi" name="DogumTarihi" value="{{ citizen.DogumTarihi }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Cinsiyet">Cinsiyet</label>
+                <input type="text" id="Cinsiyet" name="Cinsiyet" value="{{ citizen.Cinsiyet }}" required>
+            </div>
+            <div class="form-group">
+                <label for="TelefonNumarasi">Telefon Numarası</label>
+                <input type="text" id="TelefonNumarasi" name="TelefonNumarasi" value="{{ citizen.TelefonNumarasi }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Adres">Adres</label>
+                <input type="text" id="Adres" name="Adres" value="{{ citizen.Adres }}" required>
+            </div>
+            <button type="submit">Güncelle</button>
+        </form>
+    </div>
+</body>
+</html>

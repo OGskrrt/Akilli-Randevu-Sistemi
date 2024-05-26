@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 400px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .messages {
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .message.user {
+            background-color: #007BFF;
+            color: white;
+            text-align: right;
+        }
+        .message.bot {
+            background-color: #f0f0f0;
+            text-align: left;
+        }
+        .input-group {
+            display: flex;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+        .input-group button {
+            padding: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>Chatbox</h2>
+        <div class="messages" id="messages"></div>
+
+        <div id="undefined-message" style="display: none;">
+            Undefined mesajı ChatGPT 3.5-Turbo cevabıdır. Muhtemelen OpenAI serverlarından kaynaklı bir sorundan dolayı GPT düzgün cevap vermemektir. Ücretsiz API kullanılmaktadır. Terminalde "Internal Server Error:" hatası almaktayız.
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="user-input" placeholder="Mesajınızı yazın...">
+            <button id="send-btn">Gönder</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('send-btn').addEventListener('click', function() {
+            var userInput = document.getElementById('user-input').value;
+            if (userInput) {
+                addMessage(userInput, 'user');
+                document.getElementById('user-input').value = '';
+                fetch('/chatbox/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({'prompt': userInput})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    addMessage(data.response, 'bot');
+                    if (data.response === "Undefined") {
+                        document.getElementById("undefined-message").style.display = "block";
+                    } else {
+                        document.getElementById("undefined-message").style.display = "none";
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+
+        function addMessage(text, sender) {
+            var messageContainer = document.createElement('div');
+            messageContainer.classList.add('message', sender);
+            messageContainer.innerText = text;
+            document.getElementById('messages').appendChild(messageContainer);
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+        }
+    </script>
+</body>
+</html>
