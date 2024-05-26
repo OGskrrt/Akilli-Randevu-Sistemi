@@ -2,7 +2,10 @@
 
 Bu proje, vatandaşların devlet yetkililerinden randevu almasını sağlayan bir platform geliştirmeyi amaçlamaktadır. Proje, modern web teknolojileri ve çeşitli yazılım mimarisi prensipleri kullanılarak geliştirilmiştir. Bu dökümantasyon, projenin her katmanını ve kullanılan teknolojileri ayrıntılı bir şekilde açıklamaktadır.
 
-## Proje İsterleri ve Uygulama Detayları
+![1image](https://github.com/OGskrrt/Akilli-Randevu-Sistemi/assets/90643276/2e13b66a-72e5-4b8e-bc00-17c76c742483)
+<div align="center">
+  <img src="https://github.com/OGskrrt/Akilli-Randevu-Sistemi/assets/90643276/b9e6ce9d-3c74-4738-ab48-4ca418b32539" alt="Açıklama" width="400" height="400">
+</div>
 
 # Branch Özgür : 
 ### --- Presentation Layer: UI Framework Kullanımı ---
