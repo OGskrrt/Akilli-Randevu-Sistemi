@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Vatandas(models.Model):
     Ad = models.CharField(max_length=50)
     Soyad = models.CharField(max_length=50)
@@ -26,19 +25,27 @@ class Yonetici(models.Model):
         return f"Yonetici {self.pk}"
 
 class Sifreler(models.Model):
-    user_id = models.IntegerField()
+    user = models.ForeignKey(Vatandas, on_delete=models.CASCADE)
     password = models.CharField(max_length=255)
 
     def __str__(self):
         return f"{self.user_id}"
+
+class Fotolar(models.Model):
+    vatandas = models.ForeignKey(Vatandas, on_delete=models.CASCADE)
+    foto = models.ImageField(upload_to='media/', blank=True, null=True)
+
+    def __str__(self):
+        return f"Fotoğraf # {self.foto} {self.vatandas}"
+
 
 
 class Randevu(models.Model):
     Vatandas = models.ForeignKey(Vatandas, on_delete=models.CASCADE)
     Yetkili = models.ForeignKey(Yetkili, on_delete=models.CASCADE)
     Konu = models.CharField(max_length=255)
-    Tarih = models.DateField()
-    Saat = models.TimeField()
+    Tarih = models.CharField(max_length=255)
+    Saat = models.CharField(max_length=255)
 
     def __str__(self):
         return f'{self.Vatandas.Ad} {self.Vatandas.Soyad} - {self.Konu}'
@@ -59,7 +66,7 @@ class Bildirim(models.Model):
     Yetkili = models.ForeignKey(Yetkili, on_delete=models.CASCADE)
     Icerik = models.TextField()
     OkunduMu = models.BooleanField(default=False)
-    Tarih = models.DateTimeField(auto_now_add=True)
+    Tarih = models.CharField(max_length=255)
 
     def __str__(self):
         return f"Bildirim {self.pk}"

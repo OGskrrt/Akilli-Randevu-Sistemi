@@ -1,12 +1,13 @@
 # mainapp/admin.py
 
 from django.contrib import admin
-from .models import Vatandas, Yetkili, Yonetici, Sifreler, Randevu, Rapor, Bildirim
+from .models import Vatandas, Yetkili, Yonetici, Sifreler, Randevu, Rapor, Bildirim, Fotolar
 
 admin.site.register(Vatandas)
 admin.site.register(Yetkili)
 admin.site.register(Yonetici)
 admin.site.register(Sifreler)
+admin.site.register(Fotolar)
 admin.site.register(Randevu)
 admin.site.register(Rapor)
 admin.site.register(Bildirim)
@@ -21,8 +22,8 @@ class YetkiliAdmin(admin.ModelAdmin):
     search_fields = ('first_name', 'last_name', 'specialization', 'department')
 
 class SifrelerAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'password')
-    search_fields = ('user_id',)
+    list_display = ('user', 'password')
+    search_fields = ('user',)
 
 class RandevuAdmin(admin.ModelAdmin):
     list_display = ('id', 'vatandas', 'yetkili', 'tarih', 'saat', 'konu')

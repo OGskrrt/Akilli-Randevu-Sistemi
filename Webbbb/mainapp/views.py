@@ -1,3 +1,6 @@
+import os
+import traceback
+
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
@@ -6,7 +9,8 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework_simplejwt.tokens import RefreshToken
 import google.generativeai as genai
 import json
-from .models import Vatandas, Yetkili, Sifreler, Randevu
+from .models import Vatandas, Yetkili, Sifreler, Randevu, Fotolar
+from django.core.files import File
 
 # -------------------- Genel Fonksiyonlar --------------------
 def home(request):
@@ -15,9 +19,11 @@ def home(request):
 # -------------------- Vatandaş Fonksiyonları --------------------
 @csrf_exempt
 def vatandas_login(request):
+    global kullanici
     if request.method == 'POST':
         data = json.loads(request.body)
         user_id = data.get('username')
+        kullanici = user_id
         password = data.get('password')
         try:
             sifre = Sifreler.objects.get(user_id=user_id)
@@ -64,7 +70,7 @@ def vatandas_chatbox(request):
     return render(request, 'chatbox.html')
 
 def vatandas_home(request):
-    return render(request, 'vatandas_home.html')
+    return render(request, 'vatandas_home.html', {'user': kullanici})
 
 def vatandas_logout(request):
     logout(request)
@@ -98,9 +104,12 @@ def randevu_al(request):
 # -------------------- Yetkili Fonksiyonları --------------------
 @csrf_exempt
 def yetkili_login(request):
+    global yetkilid
     if request.method == 'POST':
         data = json.loads(request.body)
         user_id = data.get('username')
+        print('user_id')
+        yetkilid = user_id
         password = data.get('password')
         try:
             sifre = Sifreler.objects.get(user_id=user_id)
@@ -119,8 +128,10 @@ def yetkili_login(request):
             return JsonResponse({'error': 'Yetkili not found'}, status=400)
     return render(request, 'yetkili_login.html')
 
+@csrf_exempt
 def yetkili_home(request):
-    return render(request, 'yetkili_home.html')
+    return render(request, 'yetkili_home.html', {'yetkili': yetkilid})
+
 
 def randevular(request):
     if request.method == 'POST':
@@ -256,3 +267,88 @@ def chat_with_gemini(request):
         response = model.generate_content(prompt)
 
         return JsonResponse({'response': response.text})
+
+
+# -------------------- Profil Fonksiyonları --------------------
+@csrf_exempt
+def vatandas_profilview(request):
+    try:
+        vatandas = Vatandas.objects.get(id=kullanici)
+        fotolar = Fotolar.objects.filter(vatandas_id=kullanici)
+    except Vatandas.DoesNotExist:
+        vatandas = None
+        fotolar = None
+
+    context = {
+        'vatandas': vatandas,
+        'fotolar': fotolar
+    }
+
+    return render(request, 'vatandas_profil.html', context)
+
+@csrf_exempt
+def vatandas_profil_duzenle(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            data = json.loads(request.body)
+            field = data.get('field')
+            value = data.get('value')
+
+            if not field or not value:
+                return JsonResponse({'success': False, 'message': 'Invalid data'}, status=400)
+
+            try:
+                vatandas = Vatandas.objects.get(id=kullanici)
+            except Vatandas.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+
+            if field == 'Ad':
+                vatandas.Ad = value
+            elif field == 'Soyad':
+                vatandas.Soyad = value
+            elif field == 'Doğum Tarihi':
+                vatandas.DogumTarihi = value
+            elif field == 'Cinsiyet':
+                vatandas.Cinsiyet = value
+            elif field == 'Telefon Numarası':
+                vatandas.TelefonNumarasi = value
+            elif field == 'Adres':
+                vatandas.Adres = value
+            else:
+                return JsonResponse({'success': False, 'message': 'Invalid field'}, status=400)
+
+            vatandas.save()
+
+            return JsonResponse({'success': True})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def resim_yukle(request):
+    if request.method == 'POST':
+        try:
+            foto = request.FILES.get('photo')
+
+            vatandas_queryset = Fotolar.objects.filter(vatandas_id=kullanici)
+            vatandas = vatandas_queryset.first()
+
+            if vatandas is None:
+                return JsonResponse({'success': False, 'message': 'Kullanıcı bulunamadı'}, status=404)
+
+            try:
+                vatandas.foto = foto
+                vatandas.save()
+
+            except IOError as e:
+                return JsonResponse({'success': False, 'message': 'Dosya açılamadı: ' + str(e)}, status=400)
+
+            return JsonResponse({'success': True})
+
+        except Exception as e:
+            print(traceback.format_exc())
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+    else:
+        return JsonResponse({'success': False, 'message': 'Geçersiz istek'}, status=400)

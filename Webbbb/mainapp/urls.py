@@ -2,11 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from mainapp import views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    # Admin URL
-    path('superadmin/', admin.site.urls),
-
     # Genel URL
     path('', views.home, name='home'),
 
@@ -19,12 +18,15 @@ urlpatterns = [
     path('vatandas/logout/', views.vatandas_logout, name='vatandas_logout'),
     path('vatandas/randevu_al/', views.randevu_al, name='randevu_al'),
     path('vatandas/chatbox/', views.vatandas_chatbox, name='vatandas_chatbox'),
+    path('vatandas/profil', views.vatandas_profilview, name='vatandas_profil'),
+    path('vatandas/profil/duzenle', views.vatandas_profil_duzenle, name='vatandas_profil_duzenle'),
+    path('vatandas/profil/resim_yukle', views.resim_yukle, name='resim_yukle'),
 
     # Chatbox URL'leri
     path('chatbox/chat/', views.chat_with_gemini, name='chat_with_gemini'),
 
     # Yetkili URL'leri
-    path('yetkili/giris', views.yetkili_login, name='yetkili_login'),
+    path('yetkili/', views.yetkili_login, name='yetkili_login'),
     path('yetkili/home/', views.yetkili_home, name='yetkili_home'),
     path('yetkili/edit_authority/', views.admin_edit_authority, name='admin_edit_authority'),
     path('yetkili/search_authorities/', views.search_authorities, name='search_authorities'),
@@ -46,3 +48,6 @@ urlpatterns = [
     # Allauth URL'leri
     path('accounts/', include('allauth.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

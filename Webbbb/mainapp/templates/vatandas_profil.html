@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vatandaş Profil Sayfası</title>
+    <script> var csrf_token = "{{ csrf_token }}"; </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .profile-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        .profile-picture {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-picture img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .profile-info {
+            text-align: left;
+        }
+        .profile-info p {
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .edit-button, .save-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .logout-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+
+        .change-photo-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .change-photo-button:hover {
+            background-color: #0056b3;
+        }
+
+        .change-photo-button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-pictures">
+            {% for foto in fotolar %}
+            <div class="profile-picture">
+                <img src="{{ foto.foto.url }}" alt="Profil Resmi">
+            </div>
+            {% endfor %}
+            <button class="change-photo-button" onclick="openFileUploader()">Resmi Değiştir</button>
+        </div>
+        <div class="profile-info">
+            <p><strong>Ad:</strong> <span id="ad">{{ vatandas.Ad }}</span> <button class="edit-button" onclick="edit('Ad')">Düzenle</button></p>
+            <p><strong>Soyad:</strong> <span id="soyad">{{ vatandas.Soyad }}</span> <button class="edit-button" onclick="edit('Soyad')">Düzenle</button></p>
+            <p><strong>Doğum Tarihi:</strong> <span id="dogumTarihi">{{ vatandas.DogumTarihi }}</span> <button class="edit-button" onclick="edit('Dogum Tarihi')">Düzenle</button></p>
+            <p><strong>Cinsiyet:</strong> <span id="cinsiyet">{{ vatandas.Cinsiyet }}</span> <button class="edit-button" onclick="edit('Cinsiyet')">Düzenle</button></p>
+            <p><strong>Telefon Numarası:</strong> <span id="telefonNumarasi">{{ vatandas.TelefonNumarasi }}</span> <button class="edit-button" onclick="edit('Telefon Numarası')">Düzenle</button></p>
+            <p><strong>Adres:</strong> <span id="adres">{{ vatandas.Adres }}</span> <button class="edit-button" onclick="edit('Adres')">Düzenle</button></p>
+        </div>
+        <button class="logout-button" onclick="logout()">Çıkış Yap</button>
+    </div>
+    <input type="file" id="fileInput" style="display: none;" accept="image/*">
+    <script>
+        function edit(field) {
+            var value = document.getElementById(field.toLowerCase()).innerText;
+            var input = document.createElement("input");
+            input.type = "text";
+            input.value = value;
+            input.id = "edit-" + field.toLowerCase();
+            var saveButton = document.createElement("button");
+            saveButton.innerText = "Kaydet";
+            saveButton.className = "save-button";
+            saveButton.onclick = function() {
+                save(field);
+            };
+            var parentElement = document.getElementById(field.toLowerCase()).parentNode;
+            var editButton = parentElement.getElementsByClassName("edit-button")[0];
+            parentElement.replaceChild(input, document.getElementById(field.toLowerCase()));
+            parentElement.replaceChild(saveButton, editButton);
+        }
+
+        function save(field) {
+            var newValue = document.getElementById("edit-" + field.toLowerCase()).value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/vatandas/profil/duzenle', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            var span = document.createElement("span");
+                            span.id = field.toLowerCase();
+                            span.innerText = newValue;
+                            var parentElement = document.getElementById("edit-" + field.toLowerCase()).parentNode;
+                            parentElement.replaceChild(span, document.getElementById("edit-" + field.toLowerCase()));
+                            var editButton = document.createElement("button");
+                            editButton.innerText = "Düzenle";
+                            editButton.className = "edit-button";
+                            editButton.onclick = function() {
+                                edit(field);
+                            };
+                            parentElement.replaceChild(editButton, document.querySelector(".save-button"));
+                            alert("Değişiklikler kaydedildi.");
+                        } else {
+                            alert("Değişiklikler kaydedilemedi.");
+                        }
+                    } else {
+                        alert("Sunucu hatası.");
+                    }
+                }
+            };
+            xhr.send(JSON.stringify({field: field, value: newValue}));
+
+        }
+
+        function logout() {
+            localStorage.removeItem('access_token');
+            window.location.href = '/vatandas/';
+        }
+
+        function openFileUploader() {
+            document.getElementById("fileInput").click();
+        }
+
+        document.getElementById("fileInput").addEventListener("change", function() {
+            var file = this.files[0];
+            if (file) {
+                var formData = new FormData();
+                formData.append("photo", file);
+                var csrftoken = getCookie('csrftoken');
+                fetch("/vatandas/profil/resim_yukle", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrftoken
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("HTTP error, status = " + response.status);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.success) {
+                        alert("Resim başarıyla yüklendi.");
+                        window.location.reload();
+                    } else {
+                        alert("Resim yüklenirken bir hata oluştu.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+    </script>
+</body>
+</html>
