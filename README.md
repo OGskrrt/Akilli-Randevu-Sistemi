@@ -16,7 +16,6 @@ Bu proje, vatandaşların devlet yetkililerinden randevu almasını sağlayan bi
 - **Kullanılan Teknolojiler:** Bootstrap ve Django Templates.
 - **UI Özellikleri:** Vatandaşlar, kayıt olduktan sonra kişisel profil sayfalarına erişebilirler. Profil sayfalarında kişisel bilgilerini güncelleyebilir, randevularını görüntüleyebilir ve yeni randevular alabilirler.
 - **Responsive Tasarım:** Bootstrap kullanılarak mobil ve masaüstü cihazlarda sorunsuz çalışan, duyarlı bir arayüz tasarlandı.
-- **Özelleştirilebilir Temalar:** Kullanıcıların tercihine göre temalar seçilebilir ve kullanıcı deneyimi iyileştirilebilir.
 
 ### --- Cloud Service (AI) Using ---
 
