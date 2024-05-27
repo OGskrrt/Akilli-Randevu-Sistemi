@@ -8,7 +8,7 @@ Bu proje, vatandaşların devlet yetkililerinden randevu almasını sağlayan bi
 </div>
 
 ## Docker
-Proje Docker ile uyumlu olarak çalışmaktadır. Güncel olarak dockerize edilmiş haldedir. 
+Proje Docker ile uyumlu olarak çalışmaktadır. Güncel olarak containerized haldedir. 
    ```shell
        docker-compose up
    ```
