@@ -7,6 +7,12 @@ Bu proje, vatandaşların devlet yetkililerinden randevu almasını sağlayan bi
   <img src="https://github.com/OGskrrt/Akilli-Randevu-Sistemi/assets/90643276/b9e6ce9d-3c74-4738-ab48-4ca418b32539" alt="Açıklama" width="400" height="400">
 </div>
 
+## Docker
+Proje Docker ile uyumlu olarak çalışmaktadır. Güncel olarak dockerize edilmiş haldedir. 
+   ```shell
+       docker-compose up
+   ```
+komutu ile direkt olarak docker üzerinden projeyi çalıştırabilirsiniz. 
 # Branch Özgür : 
 ### --- Presentation Layer: UI Framework Kullanımı ---
 
